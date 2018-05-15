@@ -1,0 +1,193 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>mvc.sample</groupId>
+  <artifactId>mvc-sample</artifactId>
+  <version>1.0</version>
+  <packaging>war</packaging>
+  
+  <properties>
+      <!-- 自定义spring版本号 -->
+      <spring.version>4.3.3.RELEASE</spring.version>
+      <mapper.version>2.2.0</mapper.version>
+      <mybatis.version>3.2.8</mybatis.version>
+      <mysql-jdbc.version>5.1.31</mysql-jdbc.version>
+      <mybatis-spring.version>1.2.2</mybatis-spring.version>
+      <bonecp-spring.version>0.8.0.RELEASE</bonecp-spring.version>
+      <slf4j.version>1.7.2</slf4j.version>
+      <spring.data.redis.version>1.6.0.RELEASE</spring.data.redis.version>
+      <redis.jedis.version>2.9.0</redis.jedis.version>
+      <commons.lang3.version>3.1</commons.lang3.version>
+  </properties>
+  
+  
+  <dependencies>
+       <!-- spring相关jar包 -->
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-webmvc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context-support</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>
+         <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-tx</artifactId>  
+            <version>${spring.version}</version>  
+         </dependency>
+         <!-- spring事务 -->
+         <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-jdbc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>
+         <!-- mybatis相关jar -->  
+          <dependency>
+		    <groupId>com.github.abel533</groupId>
+		    <artifactId>mapper</artifactId>
+		    <version>${mapper.version}</version>
+		 </dependency>
+		 
+		 <dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<!-- jdbc -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-jdbc.version}</version>
+		</dependency>
+		
+		<!-- 连接池 -->
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp-spring</artifactId>
+			<version>${bonecp-spring.version}</version>
+		</dependency>
+		<!-- mybatis和Spring的整合包 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency>
+		<!-- servlet基础包 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+            <scope>provided</scope>
+		</dependency>
+		<!-- json解析工具 -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>1.1.40</version>
+		</dependency>
+		<dependency>
+		    <groupId>aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>1.5.3</version>
+		</dependency>
+		<!-- @responseBody需要依赖的jar包，不然xml中要添加转换器 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.4.2</version>
+		</dependency>
+		<!-- druid数据库连接池 -->
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>0.2.23</version>
+        </dependency>
+        <!-- log4j日志文件管理包版本 -->  
+	    <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<!-- websocket相关jar -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- redis相关jar -->
+         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>${spring.data.redis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${redis.jedis.version}</version>
+        </dependency>
+        <!-- 处理字符串的工具包 -->
+         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
+        </dependency>
+        
+        
+ </dependencies>
+  
+  	<build>
+		<plugins>
+			<!-- 配置Tomcat插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<!-- 端口 -->
+					<port>8090</port>
+					<path>/</path>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+		   <resource>
+		      <directory>src/main/resources</directory>
+		      <filtering>true</filtering>
+		      <includes>
+		         <include>mappers/*.xml</include>
+		         <include>mybatis/*.xml</include>
+		         <include>spring/*.xml</include>
+		         <include>log4j.properties</include>
+		         <include>env${variableName}/*.properties</include>
+		      </includes>
+		   </resource>
+		
+		</resources>
+		
+	</build>
+	 <!-- Maven控制Spring Profile -->
+	<profiles>
+		<profile>
+		  <id>test</id>
+		  <properties>
+		       <variableName>Test</variableName>
+		  </properties>
+		</profile>
+		<profile>
+		    <id>dev</id>
+		    <activation>
+		        <activeByDefault>true</activeByDefault>
+		    </activation>
+		    <properties>
+		        <variableName>Dev</variableName>
+		    </properties>
+		</profile>
+		<profile>
+         <id>pro</id>
+         <properties>
+               <variableName>Pro</variableName>
+         </properties>
+        </profile>
+  	</profiles>
+</project>

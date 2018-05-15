@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:redis="http://www.springframework.org/schema/redis"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd   http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/redis http://www.springframework.org/schema/redis/spring-redis.xsd"
+       default-lazy-init="false" default-autowire="byName">
+
+    <description>redis的配�?</description>
+
+    <!-- 启用缓存注解功能(请将其配置在Spring主配置文件中) -->
+    <!-- redis缓存配置-->
+    <cache:annotation-driven cache-manager="redisCacheManager"/>
+
+    <!--redis配置 用于缓存-->
+    <bean id="redisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxTotal" value="${redis.maxTotal}" />
+        <property name="blockWhenExhausted" value="${redis.blockWhenExhausted}" />
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="port" value="${redis.port}"/>
+        <property name="hostName" value="${redis.host}"/>
+        <!--<property name="password" value="${redis.pwd}"/>-->
+        <property name="usePool" value="true"/>
+        <property name="poolConfig" ref="redisPoolConfig"/>
+    </bean>
+
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="jdkRedisSerializer" class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"/>
+        <!-- 序列化方�? 建议key/hashKey采用StringRedisSerializer�? -->
+        <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="hashKeySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer" ref="jdkRedisSerializer"/>
+        <property name="hashValueSerializer" ref="jdkRedisSerializer"/>
+    </bean>
+
+    <bean id="redisCacheManager" class="comm.demo.utils.cache.ExtendedRedisCacheManager">
+        <constructor-arg ref="redisTemplate"/>
+        <!-- 默认缓存名字 -->
+        <property name="defaultCacheName" value="didibuy"/>
+        <!-- 是否在容器启动时初始�? -->
+        <property name="loadRemoteCachesOnStartup" value="true"/>
+        <!-- 是否使用前缀 -->
+        <property name="usePrefix" value="true"/>
+        <!-- 前缀命名，仅当usePrefix为true时才生效 -->
+        <property name="cachePrefix">
+            <bean class="org.springframework.data.redis.cache.DefaultRedisCachePrefix">
+                <constructor-arg name="delimiter" value=":"/>
+            </bean>
+        </property>
+        <!-- 缓存名字和有效期的分隔符 -->
+        <property name="separator" value="#"/>
+        <!-- 默认有效�?1h -->
+        <property name="defaultExpiration" value="${redis.expire}"/>
+        <!-- 是否事务提交 -->
+        <property name="transactionAware" value="false"/>
+    </bean>
+
+
+  <!--   <redis:listener-container>
+        <redis:listener ref="messageListener" method="handleMessage" serializer="jdkRedisSerializer" topic="msg_queue_web_online"/>
+    </redis:listener-container> -->
+
+
+</beans>
